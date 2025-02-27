@@ -1,5 +1,5 @@
-import { Stack } from "expo-router";
+import { WeatherView } from "@/components/WeatherView";
 
 export default function RootLayout() {
-  return <Stack />;
+  return <WeatherView />;
 }
