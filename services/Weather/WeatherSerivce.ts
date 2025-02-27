@@ -1,15 +1,15 @@
-import { Weather, WeatherRequest } from "@/types/Weather";
+import { Weather, WeatherRequest, WeatherService } from "@/types/Weather";
 import { cutDecimal } from "@/util/cutDecimal";
 import { fetchWeatherApi } from "openmeteo";
 
-class WeatherService {
+export default class MateoWeatherService implements WeatherService {
   private apiUrl: string;
 
   constructor(apiUrl: string) {
     this.apiUrl = apiUrl;
   }
 
-  async getCurrentTemp(
+  public async getCurrentTemp(
     weatherRequest: WeatherRequest,
   ): Promise<Partial<Weather>> {
     const params = {
@@ -25,7 +25,6 @@ class WeatherService {
     const response = responses[0];
     const utcOffsetSeconds = response.utcOffsetSeconds();
     const current = response.current()!;
-    // console.log(current);
     const weatherData = {
       current: {
         time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
@@ -42,5 +41,3 @@ class WeatherService {
   }
   //TODO: Get daily 7 day temp()
 }
-
-export default WeatherService;

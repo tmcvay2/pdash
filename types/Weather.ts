@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export type Weather = {
   current: {
     time: Date;
@@ -15,3 +16,7 @@ export type WeatherRequest = {
   currentTemp: string;
   temperature_unit: string;
 };
+
+export interface WeatherService {
+  getCurrentTemp(weatherRequest: WeatherRequest): Promise<Partial<Weather>>;
+}
