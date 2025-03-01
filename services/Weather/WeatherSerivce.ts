@@ -39,5 +39,37 @@ export default class MateoWeatherService implements WeatherService {
       },
     };
   }
-  //TODO: Get daily 7 day temp()
+  public async getWeeklyTemp(weatherRequest: WeatherRequest): Promise<Partial<Weather>> {
+    
+    const params = {
+      latitude: weatherRequest.latitude,
+      longitude: weatherRequest.longitude,
+      temperature_unit: weatherRequest.temperature_unit,
+      daily: weatherRequest.daily,
+      forcast_days: weatherRequest.forcast_days,
+      timezone: weatherRequest.timezone
+    };
+    const url = this.apiUrl
+    const responses = await fetchWeatherApi(url, params)
+    const response = responses[0];
+    const daily = response.daily()!
+
+    const weatherData = {
+
+      
+      daily: {
+        temperature2mMax: cutDecimal(Array.from(daily.variables(0)!.valuesArray()!),0)
+      },
+    
+    };
+    console.log(weatherData)
+
+    return {
+      daily: {
+      temperature_2m_max: weatherData.daily.temperature2mMax
+    }
+  }
 }
+
+
+  }

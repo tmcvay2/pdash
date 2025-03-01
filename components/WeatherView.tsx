@@ -18,8 +18,10 @@ export function WeatherView() {
           longitude: -87.6233,
           currentTemp: "temperature_2m",
           temperature_unit: "fahrenheit",
+          daily: "temperature_2m_max",
+         timezone: "America/Chicago"
         };
-        const data = await weatherService.getCurrentTemp(weatherRequest);
+        const data = await weatherService.getWeeklyTemp(weatherRequest);
         setWeather(data);
       } catch (error) {
         console.error("Error fetching weather data:", error);
@@ -39,7 +41,7 @@ export function WeatherView() {
   return (
     <div>
       <h1>Weather</h1>
-      <p>Temperature: {weather.current?.temperature2m}°F</p>
+      <p>Temperature: {weather.daily?.temperature_2m_max}°F</p>
     </div>
   );
 }
