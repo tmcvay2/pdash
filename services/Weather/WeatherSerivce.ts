@@ -71,5 +71,10 @@ export default class MateoWeatherService implements WeatherService {
   }
 }
 
+//getWeeklyWeatherForcast(weatherRequest: WeatherRequest): Promise <Partial<Weather>> {
+// Logic to check response if rain_sum, precipitation_sum, or snowfall_sum is not null...
+// if it is not null it will render a weather icon of the type of precipitation it is based on response
+//}
+
 
   }
