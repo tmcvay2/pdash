@@ -31,6 +31,11 @@ export function WeatherView() {
     }
     fetchWeather();
   }, []);
+  // if (weather?.daily === undefined){
+  //   throw new Error(`there is an error fetching ${weather?.daily}`)
+  // }
+  const weatherTemp = weather?.daily?.temperature_2m_max
+  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -40,8 +45,14 @@ export function WeatherView() {
   }
   return (
     <div>
-      <h1>Weather</h1>
-      <p>Temperature: {weather.daily?.temperature_2m_max}°F</p>
+       <h1>Chicago, IL</h1>
+    {Array.isArray(weatherTemp) ? (
+      weatherTemp.map((num, index) => (
+        <p key={index}>{num}°F</p>
+      ))
+    ) : (
+      <p>{weatherTemp}°F</p> // Handle case where it's a single number
+    )}
     </div>
   );
 }
