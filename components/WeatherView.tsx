@@ -1,6 +1,7 @@
 import WeatherService from "@/services/Weather/WeatherSerivce";
 import { Weather } from "@/types/Weather";
 import { useEffect, useState } from "react";
+import { Text, View } from "react-native";
 
 export function WeatherView() {
   const [weather, setWeather] = useState<Partial<Weather> | null>(null);
@@ -19,10 +20,16 @@ export function WeatherView() {
           currentTemp: "temperature_2m",
           temperature_unit: "fahrenheit",
           daily: "temperature_2m_max",
-         timezone: "America/Chicago"
+          timezone: "America/Chicago",
         };
-        const data = await weatherService.getWeeklyTemp(weatherRequest);
-        setWeather(data);
+        const [currentTemp, weeklytemp] = await Promise.all([
+          weatherService.getCurrentTemp(weatherRequest),
+          weatherService.getWeeklyTemp(weatherRequest),
+        ]);
+        setWeather({
+          ...currentTemp,
+          ...weeklytemp,
+        });
       } catch (error) {
         console.error("Error fetching weather data:", error);
       } finally {
@@ -34,25 +41,24 @@ export function WeatherView() {
   // if (weather?.daily === undefined){
   //   throw new Error(`there is an error fetching ${weather?.daily}`)
   // }
-  const weatherTemp = weather?.daily?.temperature_2m_max
-  
+  const weeklyTemp = weather?.daily?.temperature_2m_max;
+  const currentTemp = weather?.current?.temperature2m;
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Text>Loading...</Text>;
   }
   if (weather === null) {
-    return <div>Error fetching weather data</div>;
+    return <Text>Error fetching weather data</Text>;
   }
   return (
-    <div>
-       <h1>Chicago, IL</h1>
-    {Array.isArray(weatherTemp) ? (
-      weatherTemp.map((num, index) => (
-        <p key={index}>{num}°F</p>
-      ))
-    ) : (
-      <p>{weatherTemp}°F</p> // Handle case where it's a single number
-    )}
-    </div>
+    <View>
+      <Text>Chicago, IL</Text>
+      {currentTemp !== undefined && <Text>Current Temp: {currentTemp} °F</Text>}
+      {Array.isArray(weeklyTemp) ? (
+        weeklyTemp.map((num, index) => <Text key={index}>{num}°F</Text>)
+      ) : (
+        <Text>{weeklyTemp}°F</Text>
+      )}
+    </View>
   );
 }

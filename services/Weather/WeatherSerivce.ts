@@ -39,42 +39,41 @@ export default class MateoWeatherService implements WeatherService {
       },
     };
   }
-  public async getWeeklyTemp(weatherRequest: WeatherRequest): Promise<Partial<Weather>> {
-    
+  public async getWeeklyTemp(
+    weatherRequest: WeatherRequest,
+  ): Promise<Partial<Weather>> {
     const params = {
       latitude: weatherRequest.latitude,
       longitude: weatherRequest.longitude,
       temperature_unit: weatherRequest.temperature_unit,
       daily: weatherRequest.daily,
       forcast_days: weatherRequest.forcast_days,
-      timezone: weatherRequest.timezone
+      timezone: weatherRequest.timezone,
     };
-    const url = this.apiUrl
-    const responses = await fetchWeatherApi(url, params)
+    const url = this.apiUrl;
+    const responses = await fetchWeatherApi(url, params);
     const response = responses[0];
-    const daily = response.daily()!
+    const daily = response.daily()!;
 
     const weatherData = {
-
-      
       daily: {
-        temperature2mMax: cutDecimal(Array.from(daily.variables(0)!.valuesArray()!),0)
+        temperature2mMax: cutDecimal(
+          Array.from(daily.variables(0)!.valuesArray()!),
+          0,
+        ),
       },
-    
     };
-    console.log(weatherData)
+    console.log(weatherData);
 
     return {
       daily: {
-      temperature_2m_max: weatherData.daily.temperature2mMax
-    }
+        temperature_2m_max: weatherData.daily.temperature2mMax,
+      },
+    };
   }
+
+  //getWeeklyWeatherForcast(weatherRequest: WeatherRequest): Promise <Partial<Weather>> {
+  // Logic to check response if rain_sum, precipitation_sum, or snowfall_sum is not null...
+  // if it is not null it will render a weather icon of the type of precipitation it is based on response
+  //}
 }
-
-//getWeeklyWeatherForcast(weatherRequest: WeatherRequest): Promise <Partial<Weather>> {
-// Logic to check response if rain_sum, precipitation_sum, or snowfall_sum is not null...
-// if it is not null it will render a weather icon of the type of precipitation it is based on response
-//}
-
-
-  }

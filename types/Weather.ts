@@ -6,7 +6,7 @@ export type Weather = {
   };
   daily: {
     time?: string[];
-    temperature_2m_max: number |number[];
+    temperature_2m_max: number | number[];
   };
 };
 
@@ -17,11 +17,15 @@ export type WeatherRequest = {
   temperature_unit?: string;
   daily?: string;
   forcast_days?: string;
-  timezone?: string
+  timezone?: string;
 };
 
 export interface WeatherService {
-  getCurrentTemp(weatherRequest: Partial<WeatherRequest>): Promise<Partial<Weather>>;
+  getCurrentTemp(
+    weatherRequest: Partial<WeatherRequest>,
+  ): Promise<Partial<Weather>>;
 
-  getWeeklyTemp(weatherRequest: Partial<WeatherRequest>): Promise <Partial<Weather>>
+  getWeeklyTemp(
+    weatherRequest: Partial<WeatherRequest>,
+  ): Promise<Partial<Weather>>;
 }
