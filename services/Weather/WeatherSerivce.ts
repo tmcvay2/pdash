@@ -1,6 +1,5 @@
 import { Weather, WeatherRequest, WeatherService } from "@/types/Weather";
 import { cutDecimal } from "@/util/cutDecimal";
-import { fetchWeatherApi } from "openmeteo";
 
 export default class MateoWeatherService implements WeatherService {
   private apiUrl: string;
@@ -12,53 +11,49 @@ export default class MateoWeatherService implements WeatherService {
   public async getCurrentTemp(
     weatherRequest: WeatherRequest,
   ): Promise<Partial<Weather>> {
-    const params = {
-      latitude: weatherRequest.latitude,
-      longitude: weatherRequest.longitude,
-      current: weatherRequest.currentTemp,
-      temperature_unit: weatherRequest.temperature_unit,
-    };
+    const url = `${this.apiUrl}?latitude=${weatherRequest.latitude}&longitude=${weatherRequest.longitude}&current=temperature_2m&current_weather=true&temperature_unit=${weatherRequest.temperature_unit}&timezone=${weatherRequest.timezone}`;
 
-    const url = this.apiUrl;
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "pdash_app",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch current weather: ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    console.log(JSON.stringify(data));
 
-    const responses = await fetchWeatherApi(url, params);
-    const response = responses[0];
-    const utcOffsetSeconds = response.utcOffsetSeconds();
-    const current = response.current()!;
     const weatherData = {
       current: {
-        time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
-        temperature2m: cutDecimal(current.variables(0)!.value(), 0),
+        temperature_2m: cutDecimal(data.current_weather.temperature, 0),
       },
     };
 
     return {
       current: {
-        temperature2m: weatherData.current.temperature2m,
-        time: weatherData.current.time,
+        temperature_2m: weatherData.current.temperature_2m,
       },
     };
   }
   public async getWeeklyTemp(
     weatherRequest: WeatherRequest,
   ): Promise<Partial<Weather>> {
-    const params = {
-      latitude: weatherRequest.latitude,
-      longitude: weatherRequest.longitude,
-      temperature_unit: weatherRequest.temperature_unit,
-      daily: weatherRequest.daily,
-      forcast_days: weatherRequest.forcast_days,
-      timezone: weatherRequest.timezone,
-    };
-    const url = this.apiUrl;
-    const responses = await fetchWeatherApi(url, params);
-    const response = responses[0];
-    const daily = response.daily()!;
+    const url = `${this.apiUrl}?latitude=${weatherRequest.latitude}&longitude=${weatherRequest.longitude}&daily=temperature_2m_max&temperature_unit=${weatherRequest.temperature_unit}&timezone=${weatherRequest.timezone}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(
+        `Unable to fetch weekly temperatures: ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
 
     const weatherData = {
       daily: {
         temperature2mMax: cutDecimal(
-          Array.from(daily.variables(0)!.valuesArray()!),
+          Array.from(data.daily.temperature_2m_max),
           0,
         ),
       },

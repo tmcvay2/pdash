@@ -17,7 +17,7 @@ export function WeatherView() {
         const weatherRequest = {
           latitude: 41.8542,
           longitude: -87.6233,
-          currentTemp: "temperature_2m",
+          current: "temperature_2m",
           temperature_unit: "fahrenheit",
           daily: "temperature_2m_max",
           timezone: "America/Chicago",
@@ -42,7 +42,7 @@ export function WeatherView() {
   //   throw new Error(`there is an error fetching ${weather?.daily}`)
   // }
   const weeklyTemp = weather?.daily?.temperature_2m_max;
-  const currentTemp = weather?.current?.temperature2m;
+  const currentTemp = weather?.current?.temperature_2m;
 
   if (loading) {
     return <Text>Loading...</Text>;

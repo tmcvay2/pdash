@@ -1,11 +1,9 @@
 /* eslint-disable no-unused-vars */
 export type Weather = {
   current: {
-    time: Date;
-    temperature2m: number | number[];
+    temperature_2m: number | number[];
   };
   daily: {
-    time?: string[];
     temperature_2m_max: number | number[];
   };
 };
@@ -13,7 +11,7 @@ export type Weather = {
 export type WeatherRequest = {
   latitude: number;
   longitude: number;
-  currentTemp: string;
+  current: string;
   temperature_unit?: string;
   daily?: string;
   forcast_days?: string;
