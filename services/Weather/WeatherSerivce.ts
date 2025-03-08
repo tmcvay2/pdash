@@ -1,6 +1,7 @@
 import { Weather, WeatherRequest, WeatherService } from "@/types/Weather";
 import { cutDecimal } from "@/util/cutDecimal";
 
+
 export default class MateoWeatherService implements WeatherService {
   private apiUrl: string;
 
@@ -50,12 +51,15 @@ export default class MateoWeatherService implements WeatherService {
     }
     const data = await response.json();
 
+    
+
     const weatherData = {
       daily: {
         temperature2mMax: cutDecimal(
           Array.from(data.daily.temperature_2m_max),
           0,
         ),
+        time:data.daily.time
       },
     };
     console.log(weatherData);
@@ -63,6 +67,7 @@ export default class MateoWeatherService implements WeatherService {
     return {
       daily: {
         temperature_2m_max: weatherData.daily.temperature2mMax,
+        time: weatherData.daily.time
       },
     };
   }

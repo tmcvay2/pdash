@@ -1,9 +1,15 @@
 import WeatherService from "@/services/Weather/WeatherSerivce";
 import { Weather } from "@/types/Weather";
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 
-export function WeatherView() {
+interface WeatherUI {
+  style? : object
+}
+
+export function WeatherView({style}: WeatherUI) {
   const [weather, setWeather] = useState<Partial<Weather> | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -50,15 +56,77 @@ export function WeatherView() {
   if (weather === null) {
     return <Text>Error fetching weather data</Text>;
   }
+  console.log("Daily time array:", weather?.daily?.time);
+  
+  
+  const formatDays = weather.daily?.time.map((isoDate: string, index: number) => {
+   const zonedDate = toZonedTime(isoDate, "America/Chicago")
+    
+    if (index === 0){
+      return "Today"
+    }
+      return format(zonedDate, "EEE")
+    
+    });
+  
+  
+
   return (
-    <View>
-      <Text>Chicago, IL</Text>
-      {currentTemp !== undefined && <Text>Current Temp: {currentTemp} °F</Text>}
-      {Array.isArray(weeklyTemp) ? (
-        weeklyTemp.map((num, index) => <Text key={index}>{num}°F</Text>)
-      ) : (
-        <Text>{weeklyTemp}°F</Text>
-      )}
+    <View style={[styles.container1, styles.box1, style]}>
+      <View style={[styles.box]}>
+      <Text style={[styles.cityText]}>Chicago, IL</Text>
+      {currentTemp !== undefined && <Text style={[styles.currentTempText]}>{currentTemp} °F</Text>}
+      </View>
+      <View style={styles.container2}>
+        {Array.isArray(weeklyTemp) && Array.isArray(formatDays) ? (
+          weeklyTemp.map((num, index) => (
+            <View key={index} style={styles.tempBox}>
+              <Text style={styles.tempItem}>{formatDays[index]}</Text>
+              <Text style={[styles.tempItem]}>{num}°F</Text>  
+            </View>
+          ))
+        ) : (
+          <Text>{weeklyTemp}°F</Text>
+        )}
+      </View>
     </View>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container1: {
+    paddingLeft: 10,
+    flexDirection: 'row'
+    
+  },
+  cityText:{
+    fontSize: 30
+  },
+  currentTempText:{
+    fontSize: 48,
+
+  },
+  box1:{
+    width:'60%'
+  },
+  box: {
+    width: '20%',
+    alignItems: 'center'
+  },
+  container2:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center', 
+  },
+  tempBox: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 10,
+  },
+  tempItem:{
+    marginHorizontal: 5
+  }
+  
+
+})

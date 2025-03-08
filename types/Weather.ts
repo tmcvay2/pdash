@@ -5,6 +5,7 @@ export type Weather = {
   };
   daily: {
     temperature_2m_max: number | number[];
+    time: string[];
   };
 };
 
