@@ -1,7 +1,6 @@
 import { Weather, WeatherRequest, WeatherService } from "@/types/Weather";
 import { cutDecimal } from "@/util/cutDecimal";
 
-
 export default class MateoWeatherService implements WeatherService {
   private apiUrl: string;
 
@@ -14,11 +13,7 @@ export default class MateoWeatherService implements WeatherService {
   ): Promise<Partial<Weather>> {
     const url = `${this.apiUrl}?latitude=${weatherRequest.latitude}&longitude=${weatherRequest.longitude}&current=temperature_2m&current_weather=true&temperature_unit=${weatherRequest.temperature_unit}&timezone=${weatherRequest.timezone}`;
 
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent": "pdash_app",
-      },
-    });
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error(
         `Failed to fetch current weather: ${response.statusText}`,
@@ -51,15 +46,13 @@ export default class MateoWeatherService implements WeatherService {
     }
     const data = await response.json();
 
-    
-
     const weatherData = {
       daily: {
         temperature2mMax: cutDecimal(
           Array.from(data.daily.temperature_2m_max),
           0,
         ),
-        time:data.daily.time
+        time: data.daily.time,
       },
     };
     console.log(weatherData);
@@ -67,7 +60,7 @@ export default class MateoWeatherService implements WeatherService {
     return {
       daily: {
         temperature_2m_max: weatherData.daily.temperature2mMax,
-        time: weatherData.daily.time
+        time: weatherData.daily.time,
       },
     };
   }
